@@ -218,4 +218,16 @@ class EeroDeviceTrackerEntity(EeroEntity):
                     attrs["reserved_ip"] = reserved_ip
             except Exception:  # noqa: BLE001
                 pass
+        # fork addition: wireless connection detail (band, channel, channel width)
+        if self.is_connected and self.resource.is_client and self.resource.wireless:
+            try:
+                freq, unit = self.resource.interface_frequency
+                if freq:
+                    attrs["band"] = f"{freq} {unit}".strip() if unit else str(freq)
+                if self.resource.channel is not None:
+                    attrs["channel"] = self.resource.channel
+                if width := self.resource.channel_width_rx:
+                    attrs["channel_width"] = width
+            except Exception:  # noqa: BLE001
+                pass
         return attrs
