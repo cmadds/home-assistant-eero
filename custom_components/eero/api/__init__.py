@@ -455,7 +455,8 @@ class EeroAPI:
         if not url:
             return {"data": []}
         data = self.call(method=METHOD_GET, url=url)
-        _LOGGER.debug("eero reservations raw response from %s: %s", url, data)
+        # TEMP (schema discovery): WARNING so it surfaces in HA error log. Revert to debug.
+        _LOGGER.warning("EERO_RESERVATIONS_RAW from %s: %s", url, data)
         # Normalise: accept a bare list, or {"data": [...]}, or {"reservations": [...]}
         if isinstance(data, dict):
             items = data.get("data") or data.get("reservations") or []
