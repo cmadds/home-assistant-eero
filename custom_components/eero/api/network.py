@@ -918,6 +918,22 @@ class EeroNetwork(EeroResource):
         ]
 
     @property
+    def reservations(self) -> list[dict]:
+        """DHCP reservations (fork addition)."""
+        return self.data.get("reservations", {}).get("data", [])
+
+    def get_reservation(self, mac: str | None) -> dict | None:
+        """Return the reservation dict matching a client MAC, if any."""
+        if not mac:
+            return None
+        target = mac.lower().replace("-", ":")
+        for reservation in self.reservations:
+            r_mac = reservation.get("mac") or reservation.get("mac_address")
+            if r_mac and r_mac.lower().replace("-", ":") == target:
+                return reservation
+        return None
+
+    @property
     def eeros(self) -> list[EeroDevice | EeroDeviceBeacon | None]:
         """Eeros."""
         eeros = []
